@@ -19,7 +19,9 @@ mongoose.connection.on('connected', () => {
     console.log('Connected to DB')
 })
 
-app.listen(3004, () => {
-    console.log("Server is running htttp://localhost:3004");
+const PORT = process.env.PORT ?? 3004
+
+app.listen(PORT, () => {
+    console.log(`Server is running htttp://localhost:${PORT}`);
 })
 
