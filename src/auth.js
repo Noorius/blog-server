@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const User = mongoose.model('User');
-const {verify, secretOrPrivateKey} = require('./token')
+const {verify} = require('./token')
 
 function fetchUserByToken(req) {
     return new Promise(async (resolve, reject) => {
@@ -10,7 +10,7 @@ function fetchUserByToken(req) {
             let decoded;
 
             try{
-                decoded = verify(authorization, secretOrPrivateKey);
+                decoded = verify(authorization, process.env.SECRET_KEY);
             }catch (e){
                 reject(e.message);
             }

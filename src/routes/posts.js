@@ -5,15 +5,15 @@ const {verify, sign} = require('../token');
 const { fetchUserByToken } = require('../auth');
 
 const router = express.Router();
-router.use(function (req,res, next){
-    fetchUserByToken(req)
-        .then(user => {
-            next();
-        })
-        .catch(e => {
-            res.status(400).send({message: e});
-        })
-})
+// router.use(function (req,res, next){
+//     fetchUserByToken(req)
+//         .then(user => {
+//             next();
+//         })
+//         .catch(e => {
+//             res.status(400).send({message: e});
+//         })
+// })
 
 const Post = mongoose.model('Post');
 
