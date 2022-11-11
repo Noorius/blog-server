@@ -20,7 +20,10 @@ const userScheme = new mongoose.Schema({
         type: String,
         required: true
     },
-    avatar: String
+    avatar: {
+        type: String,
+        default: "http://localhost:3004/uploads/0.png"
+    }
 }, {collection: "users", timestamps: true});
 
 mongoose.model('User', userScheme)

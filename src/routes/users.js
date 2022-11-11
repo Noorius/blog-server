@@ -13,7 +13,8 @@ const storage = multer.diskStorage({
         cb(null, 'uploads')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+        const fileName = file.originalname.toLowerCase().split(' ').join('-');
+        cb(null, fileName)
     }
 });
 const upload = multer({
@@ -36,17 +37,21 @@ router.post('/signup', upload.single("avatar"), async (req, res) => {
     // console.log(req.body)
     // console.log(req.file)
 
-    const new_user = new User({
-        email: req.body.email,
-        name: req.body.name,
-        surname: req.body.surname,
-        password: Bcrypt.hashSync(req.body.password, 10),
-        avatar: req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename
-    })
 
     try {
+        const new_user = new User({
+            email: req.body.email,
+            name: req.body.name,
+            surname: req.body.surname,
+            password: Bcrypt.hashSync(req.body.password, 10)
+        })
+
+        if(req.file){
+            new_user.avatar = req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename
+        }
+
         const user = await new_user.save();
-        const token = sign({id: user._id, email: user.email, name: user.name, surname: user.surname})
+        const token = sign({id: user._id, email: user.email, name: user.name, surname: user.surname, avatar: user.avatar})
         res.send({token: token});
     } catch (err) {
         if(err.message.startsWith('E11000')) res.status(500).send({message: 'User already exists'})
@@ -67,7 +72,7 @@ router.post('/signin', async (req, res) => {
         }else if(!Bcrypt.compareSync(req.body.password, user.password)){
             res.status(400).send({message: "Incorrect password"})
         }else{
-            const token = sign({id: user._id, email: user.email, name: user.name, surname: user.surname});
+            const token = sign({id: user._id, email: user.email, name: user.name, surname: user.surname, avatar: user.avatar});
             res.send({token: token});
         }
     } catch (e){
