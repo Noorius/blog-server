@@ -14,6 +14,8 @@ app.use('/posts', require('./routes/posts'))
 app.use('/user', require('./routes/users'))
 app.use('/profile', require('./routes/profile'))
 
+app.use('/uploads', express.static('uploads'));
+
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
 mongoose.connection.on('connected', () => {
     console.log('Connected to DB')

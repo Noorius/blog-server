@@ -19,7 +19,8 @@ const userScheme = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    avatar: String
 }, {collection: "users", timestamps: true});
 
 mongoose.model('User', userScheme)

@@ -8,15 +8,18 @@ const router = express.Router();
 
 // multer
 const multer = require('multer')
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads')
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, file.fieldname + '-' + Date.now())
-//     }
-// });
-// const upload = multer({ storage: storage });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+});
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10000000000 },
+});
 
 
 
@@ -24,7 +27,7 @@ const multer = require('multer')
 
 const User = mongoose.model('User');
 
-router.post('/signup', multer({dest:"uploads"}).single("avatar"), async (req, res) => {
+router.post('/signup', upload.single("avatar"), async (req, res) => {
 
     if(!req.body.email || !req.body.password){
         res.status(400).send({message: "No email or password"})
@@ -37,7 +40,8 @@ router.post('/signup', multer({dest:"uploads"}).single("avatar"), async (req, re
         email: req.body.email,
         name: req.body.name,
         surname: req.body.surname,
-        password: Bcrypt.hashSync(req.body.password, 10)
+        password: Bcrypt.hashSync(req.body.password, 10),
+        avatar: req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename
     })
 
     try {
